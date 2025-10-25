@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PEE Paragraph Analysis - The Giver</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100%;
+            color: #2d3748;
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .point-icon {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+        }
+
+        .evidence-icon {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .explain-icon {
+            background: linear-gradient(45deg, #45b7d1, #96c93d);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .card-content {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+
+        .quote {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+            font-style: italic;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 4rem;
+            color: #f39c12;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            opacity: 0.3;
+        }
+
+        .final-paragraph {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
+        }
+
+        .final-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .final-content {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .decorative-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .decorative-1 {
+            background: #ff6b6b;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .decorative-2 {
+            background: #4ecdc4;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .decorative-3 {
+            background: #45b7d1;
+            bottom: 20%;
+            left: 15%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .exercise-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 3rem;
+        }
+
+        .exercise-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .exercise-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .exercise-subtitle {
+            font-size: 1.2rem;
+            color: #4a5568;
+            font-style: italic;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .topic-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .topic-card:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .topic-card:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .topic-card:nth-child(4) {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .topic-number {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0.3;
+        }
+
+        .topic-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .topic-card p {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .selected-topic {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .writing-exercise {
+            margin-top: 1.5rem;
+        }
+
+        .pee-step {
+            margin-bottom: 1.5rem;
+        }
+
+        .pee-step label {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .pee-step textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .pee-step textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .generate-btn, .reset-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .generate-btn:hover, .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            margin-left: 1rem;
+        }
+
+        .generated-paragraph {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+            border: 2px solid #667eea;
+        }
+
+        .paragraph-output {
+            background: #f7fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #2d3748;
+            border-left: 4px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .final-paragraph {
+                padding: 2rem;
+            }
+
+            .exercise-section {
+                padding: 2rem;
+            }
+
+            .exercise-title {
+                font-size: 2rem;
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .reset-btn {
+                margin-left: 0;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="decorative-element decorative-1"></div>
+  <div class="decorative-element decorative-2"></div>
+  <div class="decorative-element decorative-3"></div>
+  <main class="container">
+   <header class="header">
+    <h1 class="main-title" id="mainTitle">PEE Paragraph Plan: The Community's Control</h1>
+    <p class="subtitle" id="subtitle">Chapter 5 Analysis - The Giver</p>
+   </header>
+   <div class="analysis-grid">
+    <div class="analysis-card">
+     <div class="card-header">
+      <div class="card-icon point-icon">
+       P
+      </div>
+      <h2 class="card-title" id="pointTitle">Point - Main Idea</h2>
+     </div>
+     <div class="card-content">
+      <p><strong>What is the main argument about the community's goal based on this event?</strong></p>
+      <p>The community's primary goal is to control all deep personal emotions and human connections.</p>
+     </div>
+    </div>
+    <div class="analysis-card">
+     <div class="card-header">
+      <div class="card-icon evidence-icon">
+       E
+      </div>
+      <h2 class="card-title" id="evidenceTitle">Evidence - Text Clue</h2>
+     </div>
+     <div class="card-content">
+      <p><strong>What is the exact, best quote from the text that proves your point?</strong></p>
+      <div class="quote">
+       His mother gave him a pill and told him to take one every morning. 'It will stop the Stirrings,' she explained, in a voice that was pleasant and without emotional depth.
+      </div>
+     </div>
+    </div>
+    <div class="analysis-card">
+     <div class="card-header">
+      <div class="card-icon explain-icon">
+       E
+      </div>
+      <h2 class="card-title" id="explainTitle">Explain - Your Analysis</h2>
+     </div>
+     <div class="card-content">
+      <p><strong>How does the quote prove your main argument? What does it make you infer?</strong></p>
+      <p>This evidence shows that the community sees natural human feelings, like attraction, as a problem that must be eliminated. By making everyone take the pill, they prevent deep emotions like love or desire, ensuring all citizens remain calm, predictable, and fully compliant with the rules of the society.</p>
+     </div>
+    </div>
+   </div>
+   <div class="final-paragraph">
+    <h2 class="final-title" id="finalTitle">Final PEE Paragraph</h2>
+    <div class="final-content">
+     The community's primary goal is to eliminate all deep, messy personal emotions and human connections. This control is made clear when Jonas's mother insists he take a daily pill, telling him, "His mother gave him a pill and told him to take one every morning. 'It will stop the Stirrings,' she explained, in a voice that was pleasant and without emotional depth." This policy proves that the community views natural feelings like attraction and love as a problem that must be medicated away. By ensuring every citizen takes the pill, the leaders guarantee that people remain emotionally calm and compliant, sacrificing the joy of genuine feeling for the sake of absolute social order.
+    </div>
+   </div>
+   <div class="exercise-section">
+    <div class="exercise-header">
+     <h2 class="exercise-title">Your Turn: Practice PEE Analysis</h2>
+     <p class="exercise-subtitle">Choose one of the issues below from Chapters 1-6 and write your own PEE paragraph</p>
+    </div>
+    <div class="topics-grid">
+     <div class="topic-card" onclick="selectTopic(0)">
+      <div class="topic-number">
+       1
+      </div>
+      <h3>The Assignment System</h3>
+      <p>How does the community's method of assigning life roles limit individual choice and freedom?</p>
+     </div>
+     <div class="topic-card" onclick="selectTopic(1)">
+      <div class="topic-number">
+       2
+      </div>
+      <h3>Family Units</h3>
+      <p>What does the artificial creation of family units reveal about the community's control over relationships?</p>
+     </div>
+     <div class="topic-card" onclick="selectTopic(2)">
+      <div class="topic-number">
+       3
+      </div>
+      <h3>Precision of Language</h3>
+      <p>How does the community's language rules (precision of language) limit people's ability to express themselves?</p>
+     </div>
+     <div class="topic-card" onclick="selectTopic(3)">
+      <div class="topic-number">
+       4
+      </div>
+      <h3>The Release System</h3>
+      <p>What does the community's casual attitude toward "release" suggest about their values regarding life?</p>
+     </div>
+    </div>
+    <div class="selected-topic" id="selectedTopic" style="display: none;">
+     <h3 id="selectedTopicTitle"></h3>
+     <p id="selectedTopicQuestion"></p>
+     <div class="writing-exercise">
+      <div class="pee-step"><label for="pointInput"><strong>P - Point (Main Idea):</strong></label> <textarea id="pointInput" placeholder="Write your main argument about this issue..."></textarea>
+      </div>
+      <div class="pee-step"><label for="evidenceInput"><strong>E - Evidence (Quote from Text):</strong></label> <textarea id="evidenceInput" placeholder="Find a specific quote from Chapters 1-6 that supports your point..."></textarea>
+      </div>
+      <div class="pee-step"><label for="explainInput"><strong>E - Explain (Your Analysis):</strong></label> <textarea id="explainInput" placeholder="Explain how your quote proves your main point..."></textarea>
+      </div><button class="generate-btn" onclick="generateParagraph()">Generate My PEE Paragraph</button>
+     </div>
+     <div class="generated-paragraph" id="generatedParagraph" style="display: none;">
+      <h4>Your Complete PEE Paragraph:</h4>
+      <div class="paragraph-output" id="paragraphOutput"></div><button class="reset-btn" onclick="resetExercise()">Try Another Topic</button>
+     </div>
+    </div>
+   </div>
+  </main>
+  <script>
+        const defaultConfig = {
+            main_title: "PEE Paragraph Plan: The Community's Control",
+            subtitle: "Chapter 5 Analysis - The Giver",
+            point_title: "Point - Main Idea",
+            evidence_title: "Evidence - Text Clue",
+            explain_title: "Explain - Your Analysis",
+            final_title: "Final PEE Paragraph",
+            background_color: "#667eea",
+            surface_color: "#ffffff",
+            text_color: "#2d3748",
+            primary_action_color: "#764ba2",
+            secondary_action_color: "#4a5568",
+            font_family: "Georgia",
+            font_size: 16
+        };
+
+        let config = { ...defaultConfig };
+
+        async function onConfigChange(newConfig) {
+            config = { ...config, ...newConfig };
+            
+            // Update text content
+            document.getElementById('mainTitle').textContent = config.main_title || defaultConfig.main_title;
+            document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+            document.getElementById('pointTitle').textContent = config.point_title || defaultConfig.point_title;
+            document.getElementById('evidenceTitle').textContent = config.evidence_title || defaultConfig.evidence_title;
+            document.getElementById('explainTitle').textContent = config.explain_title || defaultConfig.explain_title;
+            document.getElementById('finalTitle').textContent = config.final_title || defaultConfig.final_title;
+
+            // Update colors
+            const backgroundColor = config.background_color || defaultConfig.background_color;
+            const surfaceColor = config.surface_color || defaultConfig.surface_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+            const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+            document.body.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, ${primaryColor} 100%)`;
+            document.body.style.color = textColor;
+
+            // Update surface colors
+            const surfaces = document.querySelectorAll('.header, .analysis-card');
+            surfaces.forEach(surface => {
+                surface.style.background = `rgba(${hexToRgb(surfaceColor)}, 0.95)`;
+            });
+
+            // Update font
+            const customFont = config.font_family || defaultConfig.font_family;
+            const fontSize = config.font_size || defaultConfig.font_size;
+            const fontStack = `${customFont}, serif`;
+            
+            document.body.style.fontFamily = fontStack;
+            document.body.style.fontSize = `${fontSize}px`;
+            
+            // Scale other text elements proportionally
+            document.querySelector('.main-title').style.fontSize = `${fontSize * 3}px`;
+            document.querySelector('.subtitle').style.fontSize = `${fontSize * 1.25}px`;
+            document.querySelectorAll('.card-title').forEach(el => {
+                el.style.fontSize = `${fontSize * 1.5}px`;
+            });
+            document.querySelectorAll('.card-content').forEach(el => {
+                el.style.fontSize = `${fontSize * 1.1}px`;
+            });
+            document.querySelector('.final-title').style.fontSize = `${fontSize * 2}px`;
+            document.querySelector('.final-content').style.fontSize = `${fontSize * 1.2}px`;
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? 
+                `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : 
+                '255, 255, 255';
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [
+                    {
+                        get: () => config.background_color || defaultConfig.background_color,
+                        set: (value) => {
+                            config.background_color = value;
+                            window.elementSdk.setConfig({ background_color: value });
+                        }
+                    },
+                    {
+                        get: () => config.surface_color || defaultConfig.surface_color,
+                        set: (value) => {
+                            config.surface_color = value;
+                            window.elementSdk.setConfig({ surface_color: value });
+                        }
+                    },
+                    {
+                        get: () => config.text_color || defaultConfig.text_color,
+                        set: (value) => {
+                            config.text_color = value;
+                            window.elementSdk.setConfig({ text_color: value });
+                        }
+                    },
+                    {
+                        get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                        set: (value) => {
+                            config.primary_action_color = value;
+                            window.elementSdk.setConfig({ primary_action_color: value });
+                        }
+                    },
+                    {
+                        get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                        set: (value) => {
+                            config.secondary_action_color = value;
+                            window.elementSdk.setConfig({ secondary_action_color: value });
+                        }
+                    }
+                ],
+                borderables: [],
+                fontEditable: {
+                    get: () => config.font_family || defaultConfig.font_family,
+                    set: (value) => {
+                        config.font_family = value;
+                        window.elementSdk.setConfig({ font_family: value });
+                    }
+                },
+                fontSizeable: {
+                    get: () => config.font_size || defaultConfig.font_size,
+                    set: (value) => {
+                        config.font_size = value;
+                        window.elementSdk.setConfig({ font_size: value });
+                    }
+                }
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["main_title", config.main_title || defaultConfig.main_title],
+                ["subtitle", config.subtitle || defaultConfig.subtitle],
+                ["point_title", config.point_title || defaultConfig.point_title],
+                ["evidence_title", config.evidence_title || defaultConfig.evidence_title],
+                ["explain_title", config.explain_title || defaultConfig.explain_title],
+                ["final_title", config.final_title || defaultConfig.final_title]
+            ]);
+        }
+
+        // Exercise functionality
+        const topics = [
+            {
+                title: "The Assignment System",
+                question: "How does the community's method of assigning life roles limit individual choice and freedom?"
+            },
+            {
+                title: "Family Units", 
+                question: "What does the artificial creation of family units reveal about the community's control over relationships?"
+            },
+            {
+                title: "Precision of Language",
+                question: "How does the community's language rules (precision of language) limit people's ability to express themselves?"
+            },
+            {
+                title: "The Release System",
+                question: "What does the community's casual attitude toward 'release' suggest about their values regarding life?"
+            }
+        ];
+
+        function selectTopic(index) {
+            const selectedTopic = document.getElementById('selectedTopic');
+            const selectedTopicTitle = document.getElementById('selectedTopicTitle');
+            const selectedTopicQuestion = document.getElementById('selectedTopicQuestion');
+            
+            selectedTopicTitle.textContent = topics[index].title;
+            selectedTopicQuestion.textContent = topics[index].question;
+            selectedTopic.style.display = 'block';
+            
+            // Reset form
+            document.getElementById('pointInput').value = '';
+            document.getElementById('evidenceInput').value = '';
+            document.getElementById('explainInput').value = '';
+            document.getElementById('generatedParagraph').style.display = 'none';
+            
+            // Scroll to the selected topic
+            selectedTopic.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function generateParagraph() {
+            const point = document.getElementById('pointInput').value.trim();
+            const evidence = document.getElementById('evidenceInput').value.trim();
+            const explain = document.getElementById('explainInput').value.trim();
+            
+            if (!point || !evidence || !explain) {
+                // Create a custom toast message instead of alert
+                showToast('Please fill in all three sections (Point, Evidence, and Explain) before generating your paragraph.');
+                return;
+            }
+            
+            const paragraph = `${point} ${evidence} ${explain}`;
+            
+            document.getElementById('paragraphOutput').textContent = paragraph;
+            document.getElementById('generatedParagraph').style.display = 'block';
+            
+            // Scroll to the generated paragraph
+            document.getElementById('generatedParagraph').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetExercise() {
+            document.getElementById('selectedTopic').style.display = 'none';
+            document.getElementById('pointInput').value = '';
+            document.getElementById('evidenceInput').value = '';
+            document.getElementById('explainInput').value = '';
+            document.getElementById('generatedParagraph').style.display = 'none';
+            
+            // Scroll back to topics
+            document.querySelector('.topics-grid').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(message) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                font-size: 1rem;
+                max-width: 300px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
+        // Initialize the SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99455b9573e6e116',t:'MTc2MTQzMzUxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
