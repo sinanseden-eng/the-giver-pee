@@ -361,6 +361,150 @@
             border-left: 4px solid #667eea;
         }
 
+        .ai-feedback-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .ai-feedback {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8ff 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid #48bb78;
+        }
+
+        .ai-feedback h4 {
+            color: #2d3748;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .feedback-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #667eea;
+        }
+
+        .feedback-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .feedback-category {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .feedback-text {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .feedback-score {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        .loading-feedback {
+            text-align: center;
+            padding: 2rem;
+            color: #667eea;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .quote-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quote-option {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .quote-option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .quote-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .quote-option.correct {
+            border-color: #48bb78;
+            background: rgba(72, 187, 120, 0.1);
+        }
+
+        .quote-option.incorrect {
+            border-color: #f56565;
+            background: rgba(245, 101, 101, 0.1);
+        }
+
+        .quote-text {
+            font-style: italic;
+            color: #2d3748;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-source {
+            font-size: 0.9rem;
+            color: #718096;
+            font-weight: bold;
+        }
+
+        .quote-feedback {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .quote-feedback.correct {
+            background: rgba(72, 187, 120, 0.1);
+            color: #2f855a;
+        }
+
+        .quote-feedback.incorrect {
+            background: rgba(245, 101, 101, 0.1);
+            color: #c53030;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
@@ -496,14 +640,23 @@
      <div class="writing-exercise">
       <div class="pee-step"><label for="pointInput"><strong>P - Point (Main Idea):</strong></label> <textarea id="pointInput" placeholder="Write your main argument about this issue..."></textarea>
       </div>
-      <div class="pee-step"><label for="evidenceInput"><strong>E - Evidence (Quote from Text):</strong></label> <textarea id="evidenceInput" placeholder="Find a specific quote from Chapters 1-6 that supports your point..."></textarea>
+      <div class="pee-step"><label><strong>E - Evidence (Choose the Best Quote):</strong></label>
+       <p style="margin-bottom: 1rem; color: #4a5568; font-style: italic;">Select the quote that best supports your point from the options below:</p>
+       <div class="quote-options" id="quoteOptions"><!-- Quote options will be populated here -->
+       </div><input type="hidden" id="evidenceInput">
       </div>
       <div class="pee-step"><label for="explainInput"><strong>E - Explain (Your Analysis):</strong></label> <textarea id="explainInput" placeholder="Explain how your quote proves your main point..."></textarea>
       </div><button class="generate-btn" onclick="generateParagraph()">Generate My PEE Paragraph</button>
      </div>
      <div class="generated-paragraph" id="generatedParagraph" style="display: none;">
       <h4>Your Complete PEE Paragraph:</h4>
-      <div class="paragraph-output" id="paragraphOutput"></div><button class="reset-btn" onclick="resetExercise()">Try Another Topic</button>
+      <div class="paragraph-output" id="paragraphOutput"></div>
+      <div class="ai-feedback-section">
+       <div class="ai-feedback" id="aiFeedback">
+        <h4>📝 AI Writing Coach Feedback</h4>
+        <div class="feedback-content" id="feedbackContent"></div>
+       </div>
+      </div><button class="reset-btn" onclick="resetExercise()">Try Another Topic</button>
      </div>
     </div>
    </div>
@@ -654,23 +807,179 @@
         const topics = [
             {
                 title: "The Assignment System",
-                question: "How does the community's method of assigning life roles limit individual choice and freedom?"
+                question: "How does the community's method of assigning life roles limit individual choice and freedom?",
+                quotes: [
+                    {
+                        text: "The Chief Elder explained that Jonas had been selected, not assigned, to be the new Receiver of Memory.",
+                        source: "Chapter 8",
+                        correct: true,
+                        feedback: "Perfect! This quote shows how the community controls life roles - even Jonas's 'selection' is really just another form of assignment by the authorities."
+                    },
+                    {
+                        text: "Jonas felt the Stirrings again and knew he would have to report them to his parents.",
+                        source: "Chapter 5",
+                        correct: false,
+                        feedback: "This quote is about emotional control, not job assignments. Look for quotes about how people get their life roles."
+                    },
+                    {
+                        text: "The family unit shared their feelings from the day during the evening ritual.",
+                        source: "Chapter 1",
+                        correct: false,
+                        feedback: "This is about family rituals, not career assignments. Focus on quotes about how the community decides people's jobs."
+                    },
+                    {
+                        text: "Precision of language was very important in the community.",
+                        source: "Chapter 3",
+                        correct: false,
+                        feedback: "This quote is about language rules, not job assignments. Look for evidence about how careers are chosen."
+                    },
+                    {
+                        text: "Jonas's father worked at the Nurturing Center and cared for newchildren.",
+                        source: "Chapter 2",
+                        correct: false,
+                        feedback: "This describes someone's job but doesn't show how assignments limit choice. Look for quotes about the assignment process itself."
+                    },
+                    {
+                        text: "The community celebrated when elderly citizens were released to Elsewhere.",
+                        source: "Chapter 4",
+                        correct: false,
+                        feedback: "This quote is about release ceremonies, not job assignments. Find evidence about how careers are assigned."
+                    }
+                ]
             },
             {
                 title: "Family Units", 
-                question: "What does the artificial creation of family units reveal about the community's control over relationships?"
+                question: "What does the artificial creation of family units reveal about the community's control over relationships?",
+                quotes: [
+                    {
+                        text: "Jonas's parents had applied for a child and been given Lily after waiting two years.",
+                        source: "Chapter 1",
+                        correct: true,
+                        feedback: "Excellent choice! This shows how the community controls family formation - parents must apply and wait for permission to have children."
+                    },
+                    {
+                        text: "The pills prevented the Stirrings and kept citizens from feeling attraction.",
+                        source: "Chapter 5",
+                        correct: false,
+                        feedback: "This is about emotional control, not family structure. Look for quotes about how families are formed."
+                    },
+                    {
+                        text: "Jonas was selected to be the new Receiver of Memory at the Ceremony of Twelve.",
+                        source: "Chapter 8",
+                        correct: false,
+                        feedback: "This quote is about job assignments, not family relationships. Focus on how families are created."
+                    },
+                    {
+                        text: "Citizens were required to use precise language when speaking to others.",
+                        source: "Chapter 3",
+                        correct: false,
+                        feedback: "This is about language rules, not family formation. Look for evidence about how family units are established."
+                    },
+                    {
+                        text: "The community held a release ceremony when people became too old to contribute.",
+                        source: "Chapter 4",
+                        correct: false,
+                        feedback: "This quote is about release, not family relationships. Find evidence about how families are formed or controlled."
+                    },
+                    {
+                        text: "Jonas felt different from his friends but couldn't explain why.",
+                        source: "Chapter 2",
+                        correct: false,
+                        feedback: "This is about Jonas's personal feelings, not family structure. Look for quotes about how the community creates families."
+                    }
+                ]
             },
             {
                 title: "Precision of Language",
-                question: "How does the community's language rules (precision of language) limit people's ability to express themselves?"
+                question: "How does the community's language rules (precision of language) limit people's ability to express themselves?",
+                quotes: [
+                    {
+                        text: "Jonas was chastised for saying he was 'starving' when he only meant he was hungry.",
+                        source: "Chapter 3",
+                        correct: true,
+                        feedback: "Perfect! This shows how precision of language prevents people from using expressive or emotional language, limiting their ability to communicate feelings."
+                    },
+                    {
+                        text: "Jonas's father brought home a newchild who was struggling to sleep through the night.",
+                        source: "Chapter 2",
+                        correct: false,
+                        feedback: "This is about childcare, not language rules. Look for quotes about how people are corrected for their word choices."
+                    },
+                    {
+                        text: "The community assigned jobs to twelve-year-olds based on their observed abilities.",
+                        source: "Chapter 8",
+                        correct: false,
+                        feedback: "This quote is about job assignments, not language control. Focus on evidence about how speech is regulated."
+                    },
+                    {
+                        text: "Citizens took pills each morning to prevent the Stirrings from occurring.",
+                        source: "Chapter 5",
+                        correct: false,
+                        feedback: "This is about emotional control through medication, not language rules. Look for quotes about word choice corrections."
+                    },
+                    {
+                        text: "The family unit discussed their feelings during the evening sharing ritual.",
+                        source: "Chapter 1",
+                        correct: false,
+                        feedback: "This describes a family ritual but doesn't show language restrictions. Find evidence about precision of language rules."
+                    },
+                    {
+                        text: "Jonas watched as his friend Asher received his assignment as Assistant Director of Recreation.",
+                        source: "Chapter 8",
+                        correct: false,
+                        feedback: "This is about career assignments, not language control. Look for quotes showing how word choice is corrected or limited."
+                    }
+                ]
             },
             {
                 title: "The Release System",
-                question: "What does the community's casual attitude toward 'release' suggest about their values regarding life?"
+                question: "What does the community's casual attitude toward 'release' suggest about their values regarding life?",
+                quotes: [
+                    {
+                        text: "Jonas's father explained that he would release the smaller of the newborn twins because the community couldn't have identical people.",
+                        source: "Chapter 4",
+                        correct: true,
+                        feedback: "Excellent! This shows the community's casual, matter-of-fact attitude toward ending life, treating it as a simple administrative decision."
+                    },
+                    {
+                        text: "Jonas felt the Stirrings and knew he would need to start taking the pills.",
+                        source: "Chapter 5",
+                        correct: false,
+                        feedback: "This quote is about emotional control, not the release system. Look for evidence about how the community treats release."
+                    },
+                    {
+                        text: "The Chief Elder announced that Jonas had been chosen for a special assignment.",
+                        source: "Chapter 8",
+                        correct: false,
+                        feedback: "This is about Jonas's selection as Receiver, not about release. Focus on quotes about how release is discussed or treated."
+                    },
+                    {
+                        text: "Jonas was corrected for using imprecise language when he said he was starving.",
+                        source: "Chapter 3",
+                        correct: false,
+                        feedback: "This quote is about language rules, not release. Look for evidence about the community's attitude toward ending life."
+                    },
+                    {
+                        text: "The family unit shared their daily experiences during the evening ritual.",
+                        source: "Chapter 1",
+                        correct: false,
+                        feedback: "This is about family sharing time, not release. Find quotes that show how casually the community treats release."
+                    },
+                    {
+                        text: "Jonas's parents had applied for children and were approved by the community.",
+                        source: "Chapter 2",
+                        correct: false,
+                        feedback: "This quote is about family formation, not release. Look for evidence about how the community discusses or handles release."
+                    }
+                ]
             }
         ];
 
+        let selectedQuoteIndex = -1;
+        let currentTopicIndex = -1;
+
         function selectTopic(index) {
+            currentTopicIndex = index;
             const selectedTopic = document.getElementById('selectedTopic');
             const selectedTopicTitle = document.getElementById('selectedTopicTitle');
             const selectedTopicQuestion = document.getElementById('selectedTopicQuestion');
@@ -684,9 +993,67 @@
             document.getElementById('evidenceInput').value = '';
             document.getElementById('explainInput').value = '';
             document.getElementById('generatedParagraph').style.display = 'none';
+            selectedQuoteIndex = -1;
+            
+            // Populate quote options
+            populateQuoteOptions(index);
             
             // Scroll to the selected topic
             selectedTopic.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function populateQuoteOptions(topicIndex) {
+            const quoteOptions = document.getElementById('quoteOptions');
+            const quotes = topics[topicIndex].quotes;
+            
+            // Shuffle quotes to randomize order
+            const shuffledQuotes = [...quotes].sort(() => Math.random() - 0.5);
+            
+            quoteOptions.innerHTML = '';
+            
+            shuffledQuotes.forEach((quote, index) => {
+                const quoteDiv = document.createElement('div');
+                quoteDiv.className = 'quote-option';
+                quoteDiv.onclick = () => selectQuote(quotes.indexOf(quote), quoteDiv);
+                
+                quoteDiv.innerHTML = `
+                    <div class="quote-text">"${quote.text}"</div>
+                    <div class="quote-source">- ${quote.source}</div>
+                    <div class="quote-feedback ${quote.correct ? 'correct' : 'incorrect'}">
+                        ${quote.feedback}
+                    </div>
+                `;
+                
+                quoteOptions.appendChild(quoteDiv);
+            });
+        }
+
+        function selectQuote(quoteIndex, element) {
+            // Remove previous selections
+            document.querySelectorAll('.quote-option').forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+                option.querySelector('.quote-feedback').style.display = 'none';
+            });
+            
+            // Mark this quote as selected
+            element.classList.add('selected');
+            selectedQuoteIndex = quoteIndex;
+            
+            const quote = topics[currentTopicIndex].quotes[quoteIndex];
+            
+            // Show feedback after a brief delay
+            setTimeout(() => {
+                element.classList.add(quote.correct ? 'correct' : 'incorrect');
+                element.querySelector('.quote-feedback').style.display = 'block';
+                
+                // Set the evidence input value
+                document.getElementById('evidenceInput').value = quote.text;
+                
+                // Show encouraging message for correct choice
+                if (quote.correct) {
+                    showToast('Great choice! That\'s the perfect quote for your argument.');
+                }
+            }, 300);
         }
 
         function generateParagraph() {
@@ -694,16 +1061,28 @@
             const evidence = document.getElementById('evidenceInput').value.trim();
             const explain = document.getElementById('explainInput').value.trim();
             
-            if (!point || !evidence || !explain) {
-                // Create a custom toast message instead of alert
-                showToast('Please fill in all three sections (Point, Evidence, and Explain) before generating your paragraph.');
+            if (!point) {
+                showToast('Please write your main point first.');
                 return;
             }
             
-            const paragraph = `${point} ${evidence} ${explain}`;
+            if (selectedQuoteIndex === -1) {
+                showToast('Please select a quote from the options provided.');
+                return;
+            }
+            
+            if (!explain) {
+                showToast('Please write your explanation of how the quote supports your point.');
+                return;
+            }
+            
+            const paragraph = `${point} "${evidence}" ${explain}`;
             
             document.getElementById('paragraphOutput').textContent = paragraph;
             document.getElementById('generatedParagraph').style.display = 'block';
+            
+            // Automatically generate AI feedback
+            generateAIFeedback();
             
             // Scroll to the generated paragraph
             document.getElementById('generatedParagraph').scrollIntoView({ behavior: 'smooth' });
@@ -756,6 +1135,150 @@
             }, 4000);
         }
 
+        function generateAIFeedback() {
+            const point = document.getElementById('pointInput').value.trim();
+            const evidence = document.getElementById('evidenceInput').value.trim();
+            const explain = document.getElementById('explainInput').value.trim();
+            const selectedTopicTitle = document.getElementById('selectedTopicTitle').textContent;
+            
+            const feedbackContent = document.getElementById('feedbackContent');
+            
+            // Show loading state
+            feedbackContent.innerHTML = `
+                <div class="loading-feedback">
+                    <div class="loading-spinner"></div>
+                    AI is analyzing your PEE paragraph...
+                </div>
+            `;
+            
+            // Simulate AI analysis (in a real implementation, this would call an AI API)
+            setTimeout(() => {
+                const feedback = analyzeStudentWork(point, evidence, explain, selectedTopicTitle);
+                displayFeedback(feedback);
+            }, 2000);
+        }
+
+        function analyzeStudentWork(point, evidence, explain, topic) {
+            // Simulated AI analysis based on common PEE paragraph criteria
+            const feedback = [];
+            
+            // Analyze Point section
+            let pointScore = 0;
+            let pointFeedback = "";
+            
+            if (point.length < 20) {
+                pointFeedback = "Your main point could be more detailed. Try to make a clearer, stronger argument about the community's control.";
+                pointScore = 2;
+            } else if (point.includes("community") && (point.includes("control") || point.includes("limit") || point.includes("restrict"))) {
+                pointFeedback = "Excellent! Your point clearly identifies the community's control mechanisms and their impact.";
+                pointScore = 5;
+            } else if (point.includes("community")) {
+                pointFeedback = "Good start! Your point mentions the community, but could be more specific about how they control people.";
+                pointScore = 3;
+            } else {
+                pointFeedback = "Try to make your point more specific about the community's methods of control in The Giver.";
+                pointScore = 2;
+            }
+            
+            feedback.push({
+                category: "Point Analysis",
+                text: pointFeedback,
+                score: pointScore
+            });
+            
+            // Analyze Evidence section
+            let evidenceScore = 0;
+            let evidenceFeedback = "";
+            
+            if (evidence.includes('"') || evidence.includes("'")) {
+                if (evidence.length > 30) {
+                    evidenceFeedback = "Great job including a direct quote! Your evidence is specific and supports your argument well.";
+                    evidenceScore = 5;
+                } else {
+                    evidenceFeedback = "Good use of quotes, but try to include more context or a longer quote for stronger evidence.";
+                    evidenceScore = 4;
+                }
+            } else if (evidence.length > 20) {
+                evidenceFeedback = "You have good details, but remember to include direct quotes from the text for stronger evidence.";
+                evidenceScore = 3;
+            } else {
+                evidenceFeedback = "Your evidence needs more detail. Include specific quotes from the book to support your point.";
+                evidenceScore = 2;
+            }
+            
+            feedback.push({
+                category: "Evidence Quality",
+                text: evidenceFeedback,
+                score: evidenceScore
+            });
+            
+            // Analyze Explanation section
+            let explainScore = 0;
+            let explainFeedback = "";
+            
+            if (explain.includes("shows") || explain.includes("proves") || explain.includes("demonstrates")) {
+                if (explain.length > 50) {
+                    explainFeedback = "Excellent analysis! You clearly explain how your evidence proves your point and show deep understanding.";
+                    explainScore = 5;
+                } else {
+                    explainFeedback = "Good connection between evidence and point, but try to expand your analysis with more detail.";
+                    explainScore = 4;
+                }
+            } else if (explain.length > 30) {
+                explainFeedback = "Your explanation has good ideas, but try to more clearly connect your evidence to your main point.";
+                explainScore = 3;
+            } else {
+                explainFeedback = "Your explanation needs more development. Explain how your quote proves your main argument.";
+                explainScore = 2;
+            }
+            
+            feedback.push({
+                category: "Explanation Depth",
+                text: explainFeedback,
+                score: explainScore
+            });
+            
+            // Overall feedback
+            const avgScore = Math.round((pointScore + evidenceScore + explainScore) / 3);
+            let overallFeedback = "";
+            
+            if (avgScore >= 4) {
+                overallFeedback = "Outstanding work! Your PEE paragraph demonstrates strong analytical thinking and clear understanding of The Giver's themes.";
+            } else if (avgScore >= 3) {
+                overallFeedback = "Good effort! You're on the right track. Focus on adding more specific details and stronger connections between your ideas.";
+            } else {
+                overallFeedback = "Keep working on it! Remember: Point (clear argument), Evidence (specific quotes), Explain (connect evidence to point).";
+            }
+            
+            feedback.push({
+                category: "Overall Assessment",
+                text: overallFeedback,
+                score: avgScore
+            });
+            
+            return feedback;
+        }
+
+        function displayFeedback(feedback) {
+            const feedbackContent = document.getElementById('feedbackContent');
+            
+            let html = '';
+            feedback.forEach(item => {
+                const scoreColor = item.score >= 4 ? '#48bb78' : item.score >= 3 ? '#ed8936' : '#f56565';
+                html += `
+                    <div class="feedback-item">
+                        <div class="feedback-category">
+                            ${item.category}
+                            <span class="feedback-score" style="background: ${scoreColor};">${item.score}/5</span>
+                        </div>
+                        <div class="feedback-text">${item.text}</div>
+                    </div>
+                `;
+            });
+            
+            feedbackContent.innerHTML = html;
+        }
+
         // Initialize the SDK
         if (window.elementSdk) {
             window.elementSdk.init({
@@ -766,5 +1289,5 @@
             });
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99455b9573e6e116',t:'MTc2MTQzMzUxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99487b64125ee34c',t:'MTc2MTQ2NjI3Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
